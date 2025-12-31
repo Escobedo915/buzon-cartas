@@ -1,0 +1,1281 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <title>Buzón de cartas</title>
+
+  <!-- (Opcional) Fuente bonita. Si no carga, usa la del sistema. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --radius: 20px;
+      --radius2: 26px;
+      --shadow: 0 22px 60px rgba(0,0,0,.22);
+      --shadow2: 0 14px 30px rgba(0,0,0,.22);
+      --blur: blur(14px);
+      --t: 180ms ease;
+      --t2: 420ms cubic-bezier(.2,.9,.15,1);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+    }
+
+    /* THEME VARIABLES (light/dark) */
+    body[data-theme="dark"]{
+      --bg0:#070A18;
+      --bg1:#0B1030;
+      --bg2:#121A3F;
+      --card:#0E1636cc;
+      --stroke:#ffffff1f;
+      --stroke2:#ffffff26;
+      --text:#F2F5FF;
+      --muted:#C7D2FEcc;
+      --muted2:#A5B4FCbb;
+      --paper:#11183Aff;
+      --paper2:#0B1028ff;
+      --glow1:#8B5CF6;
+      --glow2:#22C55E;
+      --accent:#A78BFA;
+      --accent2:#60A5FA;
+      --danger:#FCA5A5;
+      --ok:#86EFAC;
+      --warn:#FDE68A;
+    }
+    body[data-theme="light"]{
+      --bg0:#F6F7FF;
+      --bg1:#EEF2FF;
+      --bg2:#E9D5FF;
+      --card:#ffffffcc;
+      --stroke:#0b10201f;
+      --stroke2:#0b102024;
+      --text:#0B1020;
+      --muted:#334155cc;
+      --muted2:#475569bb;
+      --paper:#ffffff;
+      --paper2:#F8FAFF;
+      --glow1:#7C3AED;
+      --glow2:#16A34A;
+      --accent:#6D28D9;
+      --accent2:#2563EB;
+      --danger:#B91C1C;
+      --ok:#15803D;
+      --warn:#B45309;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: "Outfit", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:
+        radial-gradient(900px 520px at 18% 10%, color-mix(in oklab, var(--glow1) 40%, transparent) 0%, transparent 60%),
+        radial-gradient(700px 500px at 90% 16%, color-mix(in oklab, var(--glow2) 26%, transparent) 0%, transparent 65%),
+        linear-gradient(160deg, var(--bg0), var(--bg1) 35%, var(--bg2));
+      min-height:100svh;
+      padding: max(16px, env(safe-area-inset-top)) 16px 34px;
+      overflow-x:hidden;
+    }
+
+    .wrap{max-width:980px;margin:0 auto;}
+    header{
+      display:flex; align-items:flex-start; justify-content:space-between;
+      gap:14px; margin: 10px 0 16px;
+    }
+    .titleBlock{max-width: 64ch;}
+    h1{
+      margin:0;
+      font-size: clamp(22px, 4.4vw, 36px);
+      letter-spacing: .3px;
+      line-height:1.05;
+    }
+    .sub{
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height:1.45;
+      font-size: 14.5px;
+    }
+
+    .topActions{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .btn{
+      appearance:none;
+      border:1px solid var(--stroke);
+      background: color-mix(in oklab, var(--card) 70%, transparent);
+      backdrop-filter: var(--blur);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 14px;
+      cursor:pointer;
+      box-shadow: var(--shadow2);
+      transition: transform var(--t), background var(--t), border-color var(--t);
+      font-weight: 700;
+      letter-spacing:.2px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      user-select:none;
+    }
+    .btn:hover{border-color: var(--stroke2)}
+    .btn:active{transform: translateY(1px) scale(.99)}
+    .btn.secondary{background: transparent;}
+    .btn.small{padding:8px 10px; font-size:12.5px; border-radius: 12px;}
+    .pill{
+      font-family: var(--mono);
+      font-size: 11.5px;
+      padding: 6px 10px;
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      color: var(--muted2);
+      background: color-mix(in oklab, var(--card) 55%, transparent);
+      backdrop-filter: var(--blur);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    /* Envelope Card */
+    .card{
+      position:relative;
+      border:1px solid var(--stroke);
+      border-radius: var(--radius2);
+      background: color-mix(in oklab, var(--card) 76%, transparent);
+      backdrop-filter: var(--blur);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      padding: 14px;
+      transition: transform var(--t2), border-color var(--t);
+    }
+    .card:hover{ transform: translateY(-2px); border-color: var(--stroke2);}
+    .badge{
+      position:absolute;
+      top:12px; right:12px;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius:999px;
+      border: 1px solid var(--stroke);
+      background: color-mix(in oklab, var(--card) 72%, transparent);
+      color: var(--muted);
+      backdrop-filter: var(--blur);
+    }
+    .badge.opened{ color: color-mix(in oklab, var(--ok) 75%, var(--text)); border-color: color-mix(in oklab, var(--ok) 35%, var(--stroke));}
+    .badge.new{ color: color-mix(in oklab, var(--warn) 75%, var(--text)); border-color: color-mix(in oklab, var(--warn) 35%, var(--stroke));}
+
+    .envelopeBtn{
+      width:100%;
+      border:0;
+      background: transparent;
+      color: inherit;
+      padding: 4px;
+      cursor:pointer;
+      text-align:left;
+      display:grid;
+      gap: 12px;
+    }
+    .row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .label{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
+    .ico{
+      width:46px; height:46px;
+      border-radius: 16px;
+      border:1px solid var(--stroke);
+      background: color-mix(in oklab, var(--card) 60%, transparent);
+      display:grid; place-items:center;
+      font-size: 22px;
+      flex: 0 0 auto;
+      box-shadow: 0 12px 24px rgba(0,0,0,.12);
+    }
+    .tWrap{min-width:0}
+    .tTitle{
+      margin:0;
+      font-weight: 900;
+      font-size: 16px;
+      letter-spacing:.2px;
+      line-height:1.15;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .tDesc{
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height:1.35;
+    }
+
+    /* Mini envelope illustration */
+    .envArt{
+      position:relative;
+      height: 92px;
+      border-radius: 18px;
+      border:1px solid var(--stroke);
+      background:
+        radial-gradient(220px 120px at 20% 10%, color-mix(in oklab, var(--accent2) 18%, transparent), transparent 60%),
+        radial-gradient(220px 120px at 90% 30%, color-mix(in oklab, var(--accent) 18%, transparent), transparent 60%),
+        linear-gradient(180deg, color-mix(in oklab, var(--paper2) 70%, transparent), color-mix(in oklab, var(--card) 70%, transparent));
+      overflow:hidden;
+      box-shadow: 0 18px 40px rgba(0,0,0,.12);
+    }
+    .envArt .body{
+      position:absolute; inset: 18px 18px 16px 18px;
+      border-radius: 14px;
+      background: color-mix(in oklab, var(--paper) 82%, transparent);
+      border:1px solid var(--stroke);
+    }
+    .envArt .flap{
+      position:absolute;
+      left: 18px; right: 18px; top: 12px;
+      height: 56px;
+      transform-origin: 50% 0%;
+      background: color-mix(in oklab, var(--paper) 74%, transparent);
+      border:1px solid var(--stroke);
+      clip-path: polygon(0% 0%, 100% 0%, 50% 85%);
+      border-bottom: 0;
+      transition: transform var(--t2);
+    }
+    .envArt .seal{
+      position:absolute;
+      left: 50%;
+      top: 52px;
+      transform: translateX(-50%);
+      width: 30px; height: 30px;
+      border-radius: 999px;
+      border:1px solid var(--stroke);
+      background: radial-gradient(circle at 30% 30%, color-mix(in oklab, var(--accent) 60%, white), var(--accent));
+      box-shadow: 0 10px 22px rgba(0,0,0,.16);
+      transition: transform var(--t2), opacity var(--t2);
+    }
+    .card.openedPreview .envArt .flap{
+      transform: rotateX(64deg);
+    }
+    .card.openedPreview .envArt .seal{
+      transform: translateX(-50%) scale(.85);
+      opacity:.85;
+    }
+
+    .hintLine{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      color: var(--muted2);
+      font-size: 12.5px;
+      margin-top: 2px;
+    }
+    .spark{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      font-weight:800;
+      color: color-mix(in oklab, var(--accent2) 60%, var(--text));
+    }
+
+    /* Modal */
+    .overlay{
+      position:fixed; inset:0;
+      display:none;
+      z-index: 60;
+      background: rgba(0,0,0,.55);
+      padding: 16px;
+      align-items:center;
+      justify-content:center;
+    }
+    .overlay.show{display:flex;}
+
+    .sheet{
+      width: min(780px, 100%);
+      border-radius: 26px;
+      border:1px solid var(--stroke);
+      background:
+        radial-gradient(600px 260px at 10% 0%, color-mix(in oklab, var(--accent) 14%, transparent), transparent 65%),
+        linear-gradient(180deg, color-mix(in oklab, var(--card) 82%, transparent), color-mix(in oklab, var(--card) 66%, transparent));
+      backdrop-filter: var(--blur);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .sheetTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding: 14px 14px 10px;
+      border-bottom: 1px solid var(--stroke);
+    }
+    .sheetTitle{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+    .sheetTitle h2{
+      margin:0;
+      font-size: 16px;
+      letter-spacing:.2px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .close{
+      width: 44px; height:44px;
+      border-radius: 16px;
+      border:1px solid var(--stroke);
+      background: color-mix(in oklab, var(--card) 70%, transparent);
+      color: var(--text);
+      cursor:pointer;
+      font-size: 18px;
+      transition: transform var(--t);
+    }
+    .close:active{transform: translateY(1px) scale(.99);}
+
+    .modalBody{
+      padding: 14px;
+      display:grid;
+      gap: 12px;
+    }
+
+    /* Envelope opening animation in modal */
+    .bigEnv{
+      position:relative;
+      border-radius: 22px;
+      border:1px solid var(--stroke);
+      overflow:hidden;
+      background:
+        radial-gradient(520px 220px at 18% 0%, color-mix(in oklab, var(--accent2) 18%, transparent), transparent 60%),
+        linear-gradient(180deg, color-mix(in oklab, var(--paper2) 70%, transparent), color-mix(in oklab, var(--card) 72%, transparent));
+      padding: 14px;
+    }
+    .bigEnv .envFrame{
+      position:relative;
+      height: 140px;
+      border-radius: 18px;
+      background: color-mix(in oklab, var(--paper) 78%, transparent);
+      border:1px solid var(--stroke);
+      overflow:hidden;
+    }
+    .bigEnv .flap{
+      position:absolute; left: 10px; right: 10px; top: 6px;
+      height: 88px;
+      transform-origin: 50% 0%;
+      background: color-mix(in oklab, var(--paper) 70%, transparent);
+      border:1px solid var(--stroke);
+      clip-path: polygon(0% 0%, 100% 0%, 50% 84%);
+      border-bottom: 0;
+      transform: rotateX(0deg);
+      transition: transform var(--t2);
+      z-index: 3;
+    }
+    .bigEnv .seal{
+      position:absolute;
+      left:50%; top: 86px;
+      transform: translateX(-50%) scale(1);
+      width: 38px; height:38px;
+      border-radius: 999px;
+      border:1px solid var(--stroke);
+      background: radial-gradient(circle at 30% 30%, color-mix(in oklab, var(--accent) 60%, white), var(--accent));
+      box-shadow: 0 14px 28px rgba(0,0,0,.16);
+      z-index: 4;
+      opacity: 1;
+      transition: transform var(--t2), opacity var(--t2);
+    }
+    .bigEnv .letterSlide{
+      position:absolute;
+      left: 14px; right: 14px; bottom: 10px;
+      height: 96px;
+      border-radius: 16px;
+      border:1px solid var(--stroke);
+      background:
+        linear-gradient(180deg, color-mix(in oklab, var(--paper) 92%, transparent), color-mix(in oklab, var(--paper2) 92%, transparent));
+      transform: translateY(22px);
+      opacity: .75;
+      transition: transform var(--t2), opacity var(--t2);
+      z-index: 2;
+    }
+    .bigEnv.opening .flap{transform: rotateX(70deg);}
+    .bigEnv.opening .seal{transform: translateX(-50%) scale(.75); opacity: .85;}
+    .bigEnv.opening .letterSlide{transform: translateY(-16px); opacity: 1;}
+
+    .envActions{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-top: 10px;
+    }
+    .envHint{
+      color: var(--muted);
+      font-size: 13px;
+      margin:0;
+      line-height:1.35;
+    }
+
+    /* Paper */
+    .paper{
+      border-radius: 22px;
+      border:1px solid var(--stroke);
+      background:
+        radial-gradient(500px 220px at 8% 0%, color-mix(in oklab, var(--accent) 10%, transparent), transparent 65%),
+        linear-gradient(180deg, color-mix(in oklab, var(--paper) 90%, transparent), color-mix(in oklab, var(--paper2) 90%, transparent));
+      box-shadow: 0 16px 30px rgba(0,0,0,.12);
+      overflow:hidden;
+      display:none;
+    }
+    .paper.show{display:block;}
+    .paperInner{
+      padding: 16px 14px;
+      line-height: 1.6;
+      font-size: 15px;
+    }
+    .paperInner p{margin: 0 0 10px}
+    .paperInner p:last-child{margin-bottom:0}
+
+    /* Interactive choices */
+    .choices{
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--stroke);
+      display:grid;
+      gap: 10px;
+    }
+    .q{
+      margin:0;
+      font-weight: 900;
+      letter-spacing:.2px;
+    }
+    .choiceRow{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .choiceBtn{
+      border:1px solid var(--stroke);
+      background: color-mix(in oklab, var(--card) 68%, transparent);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 14px;
+      cursor:pointer;
+      font-weight: 800;
+      transition: transform var(--t), border-color var(--t);
+    }
+    .choiceBtn:hover{border-color: var(--stroke2)}
+    .choiceBtn:active{transform: translateY(1px) scale(.99)}
+    .choiceReply{
+      border:1px solid var(--stroke);
+      background: color-mix(in oklab, var(--card) 60%, transparent);
+      padding: 12px 12px;
+      border-radius: 16px;
+      color: var(--muted);
+      display:none;
+    }
+    .choiceReply.show{display:block;}
+
+    .meta{
+      padding: 0 14px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      color: var(--muted2);
+      font-size: 12px;
+    }
+    .metaLeft{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+    .linkish{
+      color: color-mix(in oklab, var(--accent2) 65%, var(--text));
+      font-weight: 900;
+      cursor:pointer;
+      user-select:none;
+    }
+
+    /* Lock Screen (PIN) */
+    .lock{
+      position:fixed; inset:0;
+      z-index: 80;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 16px;
+      background:
+        radial-gradient(900px 520px at 20% 10%, color-mix(in oklab, var(--glow1) 28%, transparent) 0%, transparent 60%),
+        radial-gradient(720px 520px at 90% 14%, color-mix(in oklab, var(--glow2) 20%, transparent) 0%, transparent 65%),
+        linear-gradient(160deg, var(--bg0), var(--bg1) 35%, var(--bg2));
+    }
+    .lock.show{display:flex;}
+    .lockCard{
+      width: min(420px, 100%);
+      border-radius: 28px;
+      border:1px solid var(--stroke);
+      background: color-mix(in oklab, var(--card) 80%, transparent);
+      box-shadow: var(--shadow);
+      backdrop-filter: var(--blur);
+      overflow:hidden;
+    }
+    .lockTop{
+      padding: 16px 16px 10px;
+      border-bottom: 1px solid var(--stroke);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .lockTop h3{margin:0; font-size: 16px; letter-spacing:.2px;}
+    .lockTop .mini{color: var(--muted); font-size: 13px; margin: 6px 0 0;}
+    .lockBody{padding: 14px 16px 16px; display:grid; gap: 12px;}
+    .pinDots{
+      display:flex;
+      gap: 10px;
+      justify-content:center;
+      margin-top: 2px;
+    }
+    .dot{
+      width: 12px; height:12px;
+      border-radius: 999px;
+      border: 1px solid var(--stroke);
+      background: transparent;
+      transition: background var(--t), transform var(--t);
+    }
+    .dot.filled{background: color-mix(in oklab, var(--accent) 60%, var(--text)); transform: scale(1.05);}
+    .pinMsg{
+      text-align:center;
+      color: var(--muted);
+      font-size: 13px;
+      min-height: 18px;
+    }
+    .pad{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .key{
+      height: 52px;
+      border-radius: 16px;
+      border:1px solid var(--stroke);
+      background: color-mix(in oklab, var(--card) 70%, transparent);
+      color: var(--text);
+      font-weight: 900;
+      font-size: 16px;
+      cursor:pointer;
+      transition: transform var(--t), border-color var(--t);
+      user-select:none;
+    }
+    .key:hover{border-color: var(--stroke2)}
+    .key:active{transform: translateY(1px) scale(.99)}
+    .key.alt{font-size: 13px; color: var(--muted2); font-family: var(--mono);}
+
+    /* Tiny toast */
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: max(18px, env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      z-index: 90;
+      display:none;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px solid var(--stroke);
+      background: color-mix(in oklab, var(--card) 82%, transparent);
+      backdrop-filter: var(--blur);
+      box-shadow: var(--shadow2);
+      color: var(--text);
+      font-weight: 800;
+      font-size: 13px;
+    }
+    .toast.show{display:block; animation: pop 1.7s ease both;}
+    @keyframes pop{
+      0%{opacity:0; transform: translateX(-50%) translateY(8px) scale(.98)}
+      12%{opacity:1; transform: translateX(-50%) translateY(0) scale(1)}
+      78%{opacity:1;}
+      100%{opacity:0; transform: translateX(-50%) translateY(-6px) scale(.99)}
+    }
+
+    /* ============================
+       ✅ MEJORAS MOBILE / iPHONE
+       ============================ */
+
+    /* 1) iOS polish: scroll suave dentro del modal + safe areas */
+    @supports (-webkit-touch-callout: none) {
+      body { -webkit-text-size-adjust: 100%; }
+      .overlay {
+        padding: max(12px, env(safe-area-inset-top)) 12px max(16px, env(safe-area-inset-bottom));
+      }
+      .sheet { max-height: calc(100svh - 24px); }
+      .modalBody {
+        max-height: calc(100svh - 170px);
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+    }
+
+    /* 2) En móvil: 1 columna + botones más cómodos */
+    @media (max-width: 520px){
+      .grid { grid-template-columns: 1fr; }
+      .topActions { justify-content: flex-start; }
+      .btn { padding: 12px 14px; border-radius: 16px; }
+      .ico { width: 50px; height: 50px; border-radius: 18px; }
+    }
+  </style>
+</head>
+
+<body data-theme="dark">
+  <div class="wrap">
+    <header>
+      <div class="titleBlock">
+        <h1 id="pageTitle">📮 Buzón de cartas</h1>
+        <p class="sub" id="pageSub">
+          Toca un sobre para abrir una carta. Hecho para celular: rápido, bonito y sin apps.
+        </p>
+        <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+          <span class="pill" id="pillInfo">v2 • guardado local • sin backend</span>
+          <span class="pill" id="pillOpened">Abiertas: 0</span>
+        </div>
+      </div>
+
+      <div class="topActions">
+        <button class="btn secondary" id="themeBtn" title="Cambiar tema">🌓 Tema</button>
+        <button class="btn secondary" id="randomBtn" title="Abrir una al azar">🎲 Al azar</button>
+        <button class="btn" id="resetBtn" title="Reiniciar cartas abiertas">🧹 Reiniciar</button>
+      </div>
+    </header>
+
+    <section class="grid" id="grid"></section>
+  </div>
+
+  <!-- Modal cartas -->
+  <div class="overlay" id="overlay" aria-hidden="true">
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="sheetTop">
+        <div class="sheetTitle">
+          <div class="ico" id="modalIcon">✉️</div>
+          <h2 id="modalTitle">Carta</h2>
+        </div>
+        <button class="close" id="closeBtn" aria-label="Cerrar">✕</button>
+      </div>
+
+      <div class="modalBody">
+        <div class="bigEnv" id="bigEnv">
+          <div class="envFrame">
+            <div class="flap"></div>
+            <div class="seal"></div>
+            <div class="letterSlide"></div>
+          </div>
+          <div class="envActions">
+            <p class="envHint" id="envHint">Toca “Abrir” para sacar la carta del sobre.</p>
+            <button class="btn" id="openLetterBtn">Abrir ✨</button>
+          </div>
+        </div>
+
+        <div class="paper" id="paper">
+          <div class="paperInner" id="paperInner"></div>
+        </div>
+      </div>
+
+      <div class="meta">
+        <div class="metaLeft">
+          <span id="openedStatus">—</span>
+          <span class="linkish" id="copyBtn">📋 Copiar</span>
+        </div>
+        <button class="btn small secondary" id="lockAgainBtn" title="Bloquear de nuevo">🔒 Bloquear</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lock PIN -->
+  <div class="lock" id="lock">
+    <div class="lockCard">
+      <div class="lockTop">
+        <div>
+          <h3 id="lockTitle">🔒 Buzón protegido</h3>
+          <div class="mini" id="lockHint">Ingresa el PIN para abrir el buzón.</div>
+        </div>
+        <button class="btn small secondary" id="themeBtn2">🌓</button>
+      </div>
+
+      <div class="lockBody">
+        <div class="pinDots" id="pinDots"></div>
+        <div class="pinMsg" id="pinMsg"></div>
+
+        <div class="pad" id="pad"></div>
+
+        <button class="btn secondary" id="skipPinBtn" style="display:none; justify-content:center;">
+          Continuar sin PIN
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">✅</div>
+
+  <script>
+    /***********************
+     * CONFIG (personaliza aquí)
+     ***********************/
+    const CONFIG = {
+      recipientName: "Ana",                 // opcional (puede quedar "")
+      fromName: "Alguien que te aprecia",    // firma
+      pageTitle: "📮 Buzón de cartas",
+      pageSubtitle: "Toca un sobre para abrir una carta. Hecho para celular: rápido, bonito y sin apps.",
+
+      // THEME: "auto" | "dark" | "light"
+      theme: "auto",
+
+      // PIN
+      pinEnabled: true,
+      pinCode: "1408",              // cámbialo
+      pinHint: "Pista: una fecha especial 😉",
+      allowSkipPin: false
+    };
+
+    /***********************
+     * CARTAS (con mini-interacciones)
+     ***********************/
+    const LETTERS = [
+      {
+        id: "sad",
+        icon: "🌧️",
+        title: "Abre cuando te sientas triste",
+        desc: "Para días pesados.",
+        content: [
+          "Hola. Si hoy se siente duro, no pasa nada: no tienes que cargarlo todo de golpe.",
+          "Respira conmigo: inhala 4, sostén 2, exhala 6. Repite 3 veces.",
+          "Hoy el objetivo puede ser pequeño: agua, descanso, y un paso chiquito."
+        ],
+        interact: {
+          question: "¿Qué te ayudaría más ahorita?",
+          options: [
+            { label: "🫧 Calmarme", reply: ["Pon una mano en el pecho y otra en el abdomen. Exhala lento. Estás a salvo en este momento."] },
+            { label: "💬 Desahogarme", reply: ["Escribe 3 líneas: qué pasó, qué sientes, qué necesitas. No tienes que ser perfecto/a; solo honesto/a."] },
+            { label: "🚶‍♂️ Moverme", reply: ["Camina 5 minutos (aunque sea dentro de casa). El cuerpo ayuda a que la mente baje el volumen."] }
+          ]
+        }
+      },
+      {
+        id: "happy",
+        icon: "☀️",
+        title: "Abre cuando te sientas feliz",
+        desc: "Para celebrar lo bonito.",
+        content: [
+          "¡Me encanta que estés teniendo un buen momento!",
+          "Guarda esto como una foto mental: ¿qué hizo hoy especial este instante?",
+          "Te deseo más días así, y que cuando no sean así, recuerdes que vuelven."
+        ],
+        interact: {
+          question: "¿Cómo quieres guardar este momento?",
+          options: [
+            { label: "📸 Foto mental", reply: ["Escribe 1 frase corta que describa el momento. Esa será tu “foto”."] },
+            { label: "🎁 Compartirlo", reply: ["Mándale un mensaje a alguien: “Me acordé de ti y hoy me pasó algo bonito.”"] },
+            { label: "🧡 Agradecer", reply: ["Di 3 cosas por las que te sientes agradecido/a hoy. Pequeñas también cuentan."] }
+          ]
+        }
+      },
+      {
+        id: "problem",
+        icon: "🧩",
+        title: "Abre cuando tengas un problema",
+        desc: "Para ordenar ideas.",
+        content: [
+          "Ok. Primero: respira. Segundo: lo vamos a partir en pedacitos.",
+          "1) ¿Qué está pasando? 2) ¿Qué sí controlas hoy? 3) ¿Cuál es el siguiente paso más simple?",
+          "Si te atoras: haz solo 10 minutos de avance. A veces eso destraba todo."
+        ],
+        interact: {
+          question: "Elige un modo para avanzar:",
+          options: [
+            { label: "🧱 Paso mínimo", reply: ["Define una acción de 2 minutos. Ej: “Escribir el primer renglón”, “abrir el documento”, “hacer la llamada”."] },
+            { label: "🗺️ Plan rápido", reply: ["Haz una lista de 3 opciones. Elige la más simple y prueba hoy. Ajustas después."] },
+            { label: "🧠 Orden mental", reply: ["Anota lo que *no* depende de ti y déjalo fuera. Te quedas solo con lo que sí puedes mover."] }
+          ]
+        }
+      },
+      {
+        id: "anxious",
+        icon: "🫧",
+        title: "Abre cuando sientas ansiedad",
+        desc: "Para volver al presente.",
+        content: [
+          "La ansiedad se siente enorme, pero tú puedes volver al presente, poquito a poquito.",
+          "Prueba 5-4-3-2-1: 5 cosas que ves, 4 que sientes, 3 que escuchas, 2 que hueles, 1 que saboreas.",
+          "No estás fallando. Tu cuerpo está intentando protegerte… solo que se aceleró."
+        ],
+        interact: {
+          question: "¿Qué te sirve más para aterrizar?",
+          options: [
+            { label: "🧊 Agua fría", reply: ["Lávate la cara con agua fresca o toma agua a sorbos. Señal simple al cuerpo: “bajamos”."] },
+            { label: "🫁 Respiración", reply: ["Exhala más largo que la inhalación: inhala 3, exhala 6. Repite 6 veces."] },
+            { label: "🎧 Sonidos", reply: ["Pon un audio suave o ruido blanco 5 minutos. Tu mente ama los ritmos estables."] }
+          ]
+        }
+      },
+      {
+        id: "tired",
+        icon: "🛌",
+        title: "Abre cuando estés cansado/a",
+        desc: "Para bajar el ritmo sin culpa.",
+        content: [
+          "Descansar también es avanzar.",
+          "Hoy no tienes que ganarte el descanso. Solo tómalo.",
+          "Una cosa a la vez. Si puedes, elige una sola tarea pequeña y después pausa."
+        ],
+        interact: {
+          question: "¿Qué tipo de descanso necesitas?",
+          options: [
+            { label: "😴 Dormir", reply: ["Apaga pantallas 10 min antes. Aunque sea poquito, tu cuerpo te lo va a agradecer."] },
+            { label: "🧠 Mental", reply: ["Haz 5 minutos de ‘no hacer nada’: sin música, sin scroll, solo respirar."] },
+            { label: "🧍 Corporal", reply: ["Estira cuello/hombros 2 minutos. A veces el cansancio vive ahí."] }
+          ]
+        }
+      },
+      {
+        id: "doubt",
+        icon: "🦋",
+        title: "Abre cuando dudes de ti",
+        desc: "Para recordar quién eres.",
+        content: [
+          "No eres tus días difíciles; eres la persona que sigue intentando.",
+          "Piensa en una cosa que ya superaste. Esa prueba existe por algo.",
+          "Hoy: un paso pequeño, pero real. Eso también cuenta."
+        ],
+        interact: {
+          question: "Elige un recordatorio:",
+          options: [
+            { label: "🏆 Logro", reply: ["Escribe un logro (aunque parezca pequeño). Tu cerebro necesita evidencia, no regaños."] },
+            { label: "🧩 Progreso", reply: ["Piensa: “¿Qué mejoré 1% este mes?” Ese 1% se acumula."] },
+            { label: "🤝 Apoyo", reply: ["Si puedes, manda un mensaje breve a alguien de confianza: “¿Me recuerdas algo bueno de mí?”"] }
+          ]
+        }
+      }
+    ];
+
+    /***********************
+     * Estado / Utils
+     ***********************/
+    const STORAGE_OPENED = "mailbox_opened_v2";
+    const STORAGE_THEME  = "mailbox_theme_v2";
+    const SESSION_UNLOCK = "mailbox_unlocked_session_v2";
+
+    const $ = (id)=>document.getElementById(id);
+    const grid = $("grid");
+    const overlay = $("overlay");
+    const bigEnv = $("bigEnv");
+    const paper = $("paper");
+    const paperInner = $("paperInner");
+    const modalTitle = $("modalTitle");
+    const modalIcon = $("modalIcon");
+    const envHint = $("envHint");
+    const openLetterBtn = $("openLetterBtn");
+    const openedStatus = $("openedStatus");
+    const pillOpened = $("pillOpened");
+    const toast = $("toast");
+
+    let currentLetter = null;
+    let openedSet = new Set(loadOpened());
+
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.remove("show");
+      void toast.offsetWidth;
+      toast.classList.add("show");
+    }
+
+    function loadOpened(){
+      try{
+        const raw = localStorage.getItem(STORAGE_OPENED);
+        const arr = raw ? JSON.parse(raw) : [];
+        return Array.isArray(arr) ? arr : [];
+      }catch{ return []; }
+    }
+    function saveOpened(){
+      localStorage.setItem(STORAGE_OPENED, JSON.stringify([...openedSet]));
+      pillOpened.textContent = `Abiertas: ${openedSet.size}`;
+    }
+
+    function setPageTexts(){
+      $("pageTitle").textContent = CONFIG.pageTitle;
+      $("pageSub").textContent = CONFIG.pageSubtitle;
+      pillOpened.textContent = `Abiertas: ${openedSet.size}`;
+    }
+
+    /***********************
+     * Theme
+     ***********************/
+    function systemTheme(){
+      return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
+    function applyTheme(t){
+      const theme = (t === "auto") ? systemTheme() : t;
+      document.body.setAttribute("data-theme", theme);
+    }
+    function getSavedTheme(){
+      const t = localStorage.getItem(STORAGE_THEME);
+      return t || CONFIG.theme || "auto";
+    }
+    function cycleTheme(){
+      const cur = getSavedTheme();
+      const next = cur === "auto" ? "dark" : cur === "dark" ? "light" : "auto";
+      localStorage.setItem(STORAGE_THEME, next);
+      applyTheme(next);
+      showToast(next === "auto" ? "🌓 Tema: auto" : (next === "dark" ? "🌙 Tema: oscuro" : "☀️ Tema: claro"));
+    }
+
+    /***********************
+     * Render grid
+     ***********************/
+    function render(){
+      grid.innerHTML = "";
+      LETTERS.forEach(l=>{
+        const isOpened = openedSet.has(l.id);
+
+        const card = document.createElement("article");
+        card.className = "card" + (isOpened ? " openedPreview" : "");
+        card.innerHTML = `
+          <div class="badge ${isOpened ? "opened":"new"}">${isOpened ? "Abierta" : "Nueva"}</div>
+          <button class="envelopeBtn" aria-label="${l.title}">
+            <div class="row">
+              <div class="label">
+                <div class="ico">${l.icon || "✉️"}</div>
+                <div class="tWrap">
+                  <p class="tTitle">${escapeHtml(l.title)}</p>
+                  <p class="tDesc">${escapeHtml(l.desc || "")}</p>
+                </div>
+              </div>
+            </div>
+            <div class="envArt" aria-hidden="true">
+              <div class="body"></div>
+              <div class="flap"></div>
+              <div class="seal"></div>
+            </div>
+            <div class="hintLine">
+              <span class="spark">${isOpened ? "✅" : "✨"} ${isOpened ? "Lista para releer" : "Sello intacto"}</span>
+              <span>Toca para abrir</span>
+            </div>
+          </button>
+        `;
+        card.querySelector(".envelopeBtn").onclick = ()=>openModal(l.id);
+        grid.appendChild(card);
+      });
+      saveOpened();
+    }
+
+    function escapeHtml(s){
+      return String(s)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    /***********************
+     * Modal logic + envelope open animation
+     ***********************/
+    function openModal(letterId){
+      currentLetter = LETTERS.find(x=>x.id===letterId);
+      if(!currentLetter) return;
+
+      modalIcon.textContent = currentLetter.icon || "✉️";
+      modalTitle.textContent = currentLetter.title;
+
+      bigEnv.classList.remove("opening");
+      paper.classList.remove("show");
+      paperInner.innerHTML = "";
+      envHint.textContent = "Toca “Abrir” para sacar la carta del sobre.";
+      openLetterBtn.disabled = false;
+
+      openedStatus.textContent = openedSet.has(letterId)
+        ? "📌 Ya la habías abierto en este dispositivo."
+        : "🆕 Primera vez abriendo esta carta aquí.";
+
+      overlay.classList.add("show");
+      overlay.setAttribute("aria-hidden","false");
+
+      document.addEventListener("keydown", escClose);
+    }
+
+    function escClose(e){
+      if(e.key === "Escape") closeModal();
+    }
+    function closeModal(){
+      overlay.classList.remove("show");
+      overlay.setAttribute("aria-hidden","true");
+      document.removeEventListener("keydown", escClose);
+      currentLetter = null;
+    }
+
+    function typeParagraphs(paragraphs, targetEl, doneCb){
+      targetEl.innerHTML = "";
+      let pIndex = 0;
+
+      const makeP = ()=>{
+        const p = document.createElement("p");
+        targetEl.appendChild(p);
+        return p;
+      };
+
+      const typeText = (pEl, text, i=0)=>{
+        if(i <= text.length){
+          pEl.textContent = text.slice(0, i);
+          requestAnimationFrame(()=>typeText(pEl, text, i+1));
+        }else{
+          pIndex++;
+          if(pIndex < paragraphs.length){
+            const nextP = makeP();
+            typeText(nextP, paragraphs[pIndex], 0);
+          }else{
+            doneCb?.();
+          }
+        }
+      };
+
+      const first = makeP();
+      typeText(first, paragraphs[0] ?? "", 0);
+    }
+
+    function buildLetterParagraphs(){
+      const toLine = CONFIG.recipientName ? `Para ${CONFIG.recipientName}:` : "Para ti:";
+      const signature = CONFIG.fromName ? `— ${CONFIG.fromName}` : "—";
+      return [toLine, ...currentLetter.content, signature];
+    }
+
+    function injectInteraction(interact){
+      if(!interact) return;
+
+      const wrap = document.createElement("div");
+      wrap.className = "choices";
+      wrap.innerHTML = `
+        <p class="q">${escapeHtml(interact.question || "Elige una opción:")}</p>
+        <div class="choiceRow"></div>
+        <div class="choiceReply" id="choiceReply"></div>
+      `;
+
+      const row = wrap.querySelector(".choiceRow");
+      const replyBox = wrap.querySelector("#choiceReply");
+
+      interact.options.forEach(opt=>{
+        const b = document.createElement("button");
+        b.className = "choiceBtn";
+        b.textContent = opt.label;
+        b.onclick = ()=>{
+          replyBox.classList.add("show");
+          replyBox.textContent = (opt.reply || []).join(" ");
+          showToast("✨ Hecho");
+        };
+        row.appendChild(b);
+      });
+
+      paperInner.appendChild(wrap);
+    }
+
+    openLetterBtn.onclick = ()=>{
+      if(!currentLetter) return;
+
+      bigEnv.classList.add("opening");
+      openLetterBtn.disabled = true;
+      envHint.textContent = "Listo. Léela con calma. 🤍";
+
+      openedSet.add(currentLetter.id);
+      saveOpened();
+      render();
+
+      setTimeout(()=>{
+        paper.classList.add("show");
+
+        const paragraphs = buildLetterParagraphs();
+        typeParagraphs(paragraphs, paperInner, ()=>{
+          if(currentLetter.interact){
+            injectInteraction(currentLetter.interact);
+          }
+        });
+
+        openedStatus.textContent = "✅ Guardado como “abierta” en este dispositivo.";
+      }, 420);
+    };
+
+    $("closeBtn").onclick = closeModal;
+    overlay.addEventListener("click",(e)=>{ if(e.target===overlay) closeModal(); });
+
+    $("randomBtn").onclick = ()=>{
+      const pick = LETTERS[Math.floor(Math.random()*LETTERS.length)];
+      openModal(pick.id);
+    };
+
+    $("resetBtn").onclick = ()=>{
+      openedSet = new Set();
+      localStorage.setItem(STORAGE_OPENED, JSON.stringify([]));
+      render();
+      showToast("🧹 Reiniciado");
+    };
+
+    $("copyBtn").onclick = async ()=>{
+      if(!currentLetter) return;
+      const signature = CONFIG.fromName ? `— ${CONFIG.fromName}` : "";
+      const toLine = CONFIG.recipientName ? `Para ${CONFIG.recipientName}:` : "Para ti:";
+      const text = [
+        currentLetter.title,
+        "",
+        toLine,
+        ...(currentLetter.content || []),
+        "",
+        signature
+      ].join("\n");
+
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast("📋 Copiado");
+      }catch{
+        showToast("❌ No se pudo copiar");
+      }
+    };
+
+    $("themeBtn").onclick = cycleTheme;
+    $("themeBtn2").onclick = cycleTheme;
+
+    /***********************
+     * PIN lock
+     ***********************/
+    const lock = $("lock");
+    const pinDots = $("pinDots");
+    const pinMsg = $("pinMsg");
+    const pad = $("pad");
+    const skipPinBtn = $("skipPinBtn");
+    let pinInput = "";
+
+    function buildDots(n=4){
+      pinDots.innerHTML = "";
+      for(let i=0;i<n;i++){
+        const d = document.createElement("div");
+        d.className = "dot";
+        pinDots.appendChild(d);
+      }
+    }
+    function renderDots(){
+      const dots = [...pinDots.children];
+      dots.forEach((d,i)=>{
+        d.classList.toggle("filled", i < pinInput.length);
+      });
+    }
+    function setPinMsg(msg, isError=false){
+      pinMsg.textContent = msg || "";
+      pinMsg.style.color = isError ? "var(--danger)" : "var(--muted)";
+    }
+
+    function lockApp(){
+      sessionStorage.removeItem(SESSION_UNLOCK);
+      pinInput = "";
+      renderDots();
+      setPinMsg("");
+      lock.classList.add("show");
+    }
+    function unlockApp(){
+      sessionStorage.setItem(SESSION_UNLOCK, "1");
+      lock.classList.remove("show");
+      showToast("🔓 Desbloqueado");
+    }
+
+    function setupPad(){
+      pad.innerHTML = "";
+      const keys = ["1","2","3","4","5","6","7","8","9","⌫","0","OK"];
+
+      keys.forEach(k=>{
+        const b = document.createElement("button");
+        b.className = "key" + ((k==="⌫"||k==="OK") ? " alt" : "");
+        b.textContent = k;
+        b.onclick = ()=>{
+          if(k === "⌫"){
+            pinInput = pinInput.slice(0,-1);
+            renderDots();
+            setPinMsg("");
+            return;
+          }
+          if(k === "OK"){
+            if(pinInput === CONFIG.pinCode){
+              unlockApp();
+            }else{
+              pinInput = "";
+              renderDots();
+              setPinMsg("PIN incorrecto. Intenta de nuevo.", true);
+              showToast("❌ PIN");
+            }
+            return;
+          }
+          if(pinInput.length >= CONFIG.pinCode.length) return;
+          pinInput += k;
+          renderDots();
+          setPinMsg("");
+
+          if(pinInput.length === CONFIG.pinCode.length){
+            if(pinInput === CONFIG.pinCode){
+              unlockApp();
+            }else{
+              pinInput = "";
+              renderDots();
+              setPinMsg("PIN incorrecto. Intenta de nuevo.", true);
+              showToast("❌ PIN");
+            }
+          }
+        };
+        pad.appendChild(b);
+      });
+    }
+
+    $("lockAgainBtn").onclick = ()=>{
+      closeModal();
+      lockApp();
+    };
+
+    function initPin(){
+      $("lockHint").textContent = CONFIG.pinHint || "Ingresa el PIN para abrir el buzón.";
+      $("skipPinBtn").style.display = CONFIG.allowSkipPin ? "inline-flex" : "none";
+      skipPinBtn.onclick = ()=>unlockApp();
+
+      buildDots(CONFIG.pinCode.length);
+      setupPad();
+
+      if(!CONFIG.pinEnabled){
+        lock.classList.remove("show");
+        return;
+      }
+      const unlocked = sessionStorage.getItem(SESSION_UNLOCK) === "1";
+      if(!unlocked) lock.classList.add("show");
+    }
+
+    /***********************
+     * Init
+     ***********************/
+    function init(){
+      const savedTheme = localStorage.getItem(STORAGE_THEME) || CONFIG.theme || "auto";
+      applyTheme(savedTheme);
+
+      if(window.matchMedia){
+        window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", ()=>{
+          const t = localStorage.getItem(STORAGE_THEME) || CONFIG.theme || "auto";
+          if(t==="auto") applyTheme("auto");
+        });
+      }
+
+      setPageTexts();
+      render();
+      initPin();
+    }
+
+    init();
+  </script>
+</body>
+</html>
