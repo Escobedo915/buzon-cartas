@@ -22,47 +22,65 @@
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
     }
 
-    /* THEME VARIABLES (light/dark) */
-    body[data-theme="dark"]{
-      --bg0:#070A18;
-      --bg1:#0B1030;
-      --bg2:#121A3F;
-      --card:#0E1636cc;
-      --stroke:#ffffff1f;
-      --stroke2:#ffffff26;
-      --text:#F2F5FF;
-      --muted:#C7D2FEcc;
-      --muted2:#A5B4FCbb;
-      --paper:#11183Aff;
-      --paper2:#0B1028ff;
-      --glow1:#8B5CF6;
-      --glow2:#22C55E;
-      --accent:#A78BFA;
-      --accent2:#60A5FA;
-      --danger:#FCA5A5;
-      --ok:#86EFAC;
-      --warn:#FDE68A;
-    }
-    body[data-theme="light"]{
-      --bg0:#F6F7FF;
-      --bg1:#EEF2FF;
-      --bg2:#E9D5FF;
-      --card:#ffffffcc;
-      --stroke:#0b10201f;
-      --stroke2:#0b102024;
-      --text:#0B1020;
-      --muted:#334155cc;
-      --muted2:#475569bb;
-      --paper:#ffffff;
-      --paper2:#F8FAFF;
-      --glow1:#7C3AED;
-      --glow2:#16A34A;
-      --accent:#6D28D9;
-      --accent2:#2563EB;
-      --danger:#B91C1C;
-      --ok:#15803D;
-      --warn:#B45309;
-    }
+   body[data-theme="dark"]{
+    /* Fondo vino profundo (suave, nada chillón) */
+    --bg0:#0B0507;
+    --bg1:#14080C;
+    --bg2:#220B12;
+
+    --card:#1A0B12cc;     /* vidrio con tinte rojo oscuro */
+    --stroke:#ffffff1f;
+    --stroke2:#ffffff26;
+
+    --text:#FFF5F7;
+    --muted:#FFD1D9cc;
+    --muted2:#FFB6C3bb;
+
+    --paper:#1B0B11ff;
+    --paper2:#12070Bff;
+
+    /* Glows rosados/rojos suaves */
+    --glow1:#FB7185;      /* rose */
+    --glow2:#F43F5E;      /* crimson suave */
+
+    /* Acentos rojos principales */
+    --accent:#E11D48;     /* rose-600 */
+    --accent2:#FB7185;    /* rose-400 */
+
+    --danger:#FCA5A5;
+    --ok:#86EFAC;
+    --warn:#FDE68A;
+  }
+
+  body[data-theme="light"]{
+    /* Fondo claro rosado muy suave */
+    --bg0:#FFF7F8;
+    --bg1:#FFE4E6;
+    --bg2:#FFD6DD;
+
+    --card:#ffffffcc;
+    --stroke:#0b10201f;
+    --stroke2:#0b102024;
+
+    --text:#1B0B11;
+    --muted:#5B2431cc;
+    --muted2:#6B2A38bb;
+
+    --paper:#ffffff;
+    --paper2:#FFF3F5;
+
+    /* Glows suaves (no neón) */
+    --glow1:#F43F5E;      /* crimson */
+    --glow2:#FB7185;      /* rose */
+
+    /* Acentos */
+    --accent:#BE123C;     /* rose-700 (vino) */
+    --accent2:#E11D48;    /* rose-600 */
+
+    --danger:#B91C1C;
+    --ok:#15803D;
+    --warn:#B45309;
+  }
 
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -1364,4 +1382,5 @@
   </script>
 </body>
 </html>
+
 
