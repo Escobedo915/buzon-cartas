@@ -485,6 +485,7 @@
       border-radius: 16px;
       color: var(--muted);
       display:none;
+      white-space: pre-wrap;
     }
     .choiceReply.show{display:block;}
 
@@ -607,11 +608,7 @@
       100%{opacity:0; transform: translateX(-50%) translateY(-6px) scale(.99)}
     }
 
-    /* ============================
-       ✅ MEJORAS MOBILE / iPHONE
-       ============================ */
-
-    /* 1) iOS polish: scroll suave dentro del modal + safe areas */
+    /* ✅ Mobile polish */
     @supports (-webkit-touch-callout: none) {
       body { -webkit-text-size-adjust: 100%; }
       .overlay {
@@ -625,7 +622,6 @@
       }
     }
 
-    /* 2) En móvil: 1 columna + botones más cómodos */
     @media (max-width: 520px){
       .grid { grid-template-columns: 1fr; }
       .topActions { justify-content: flex-start; }
@@ -644,7 +640,7 @@
           Toca un sobre para abrir una carta. Hecho para celular: rápido, bonito y sin apps.
         </p>
         <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-          <span class="pill" id="pillInfo">v2 • guardado local • sin backend</span>
+          <span class="pill" id="pillInfo">v3 • cartas para reconectar • guardado local</span>
           <span class="pill" id="pillOpened">Abiertas: 0</span>
         </div>
       </div>
@@ -729,136 +725,211 @@
      * CONFIG (personaliza aquí)
      ***********************/
     const CONFIG = {
-      recipientName: "Ana",                 // opcional (puede quedar "")
-      fromName: "Alguien que te aprecia",    // firma
-      pageTitle: "📮 Buzón de cartas",
-      pageSubtitle: "Toca un sobre para abrir una carta. Hecho para celular: rápido, bonito y sin apps.",
+      recipientName: "Ana",               // <- cambia si quieres (o deja "")
+      fromName: "Alejandro",              // <- tu nombre (firma)
+      pageTitle: "📮 Buzón para ti",
+      pageSubtitle: "Cartitas para abrir en distintos momentos. Sin presión, con cariño.",
+
+      // Saludo por defecto (si una carta no define salutation)
+      defaultSalutation: "Mi amor…",
+      // Firma por defecto (si una carta no define signOff)
+      defaultSignOff: "Con cariño,",
 
       // THEME: "auto" | "dark" | "light"
       theme: "auto",
 
       // PIN
       pinEnabled: true,
-      pinCode: "1408",              // cámbialo
+      pinCode: "1408",              // cámbialo si quieres
       pinHint: "Pista: una fecha especial 😉",
       allowSkipPin: false
     };
 
     /***********************
-     * CARTAS (con mini-interacciones)
+     * CARTAS (reconexión suave + apoyo)
+     * - Sin presión
+     * - Contexto: yo -> ella
+     * - Sin letras de canciones (solo referencias por nombre)
      ***********************/
     const LETTERS = [
       {
-        id: "sad",
-        icon: "🌧️",
-        title: "Abre cuando te sientas triste",
-        desc: "Para días pesados.",
+        id: "newyear",
+        icon: "🎆",
+        title: "Ábrela cuando sea Año Nuevo",
+        desc: "Un inicio tranquilo… y firme.",
+        salutation: "Mi amor…",
         content: [
-          "Hola. Si hoy se siente duro, no pasa nada: no tienes que cargarlo todo de golpe.",
-          "Respira conmigo: inhala 4, sostén 2, exhala 6. Repite 3 veces.",
-          "Hoy el objetivo puede ser pequeño: agua, descanso, y un paso chiquito."
+          "Hoy que empieza un año nuevo, no quiero llenarte de palabras ni de promesas al aire. Solo quiero que sepas algo simple y verdadero: te extraño con calma, y te pienso bonito.",
+          "Tú una vez me dijiste que viviera, aunque no supiéramos si el futuro nos iba a juntar otra vez… y te hice caso.",
+          "Puedo vivir sin ti, sí. Pero si soy honesto, prefiero estar contigo. No por necesidad, sino porque contigo mi vida se siente completa.",
+          "Este año lo único que le pido a Dios y a la vida es esto: que estés en mi vida de nuevo. Y si se puede, que sea para quedarte… sin prisas, sin presión, sin miedo.",
+          "Porque aunque te hayas ido físicamente, nunca te fuiste de mi corazón.",
+          "Y si algún día te nace hablar… aquí está tu mi señor. Con respeto, con paz y con amor. Mi biejaaaa."
         ],
+        signOff: "Feliz Año Nuevo.",
+        interact: {
+          question: "Si te nace responder (sin presión), ¿qué te gustaría que fuera?",
+          options: [
+            { label: "🙂 Un emoji", reply: ["Con uno me basta. Yo entiendo el mensaje."] },
+            { label: "👋 Un “hola”", reply: ["Un “hola” abre una puerta. Sin prisa, a tu ritmo."] },
+            { label: "🕊️ Aún no", reply: ["Está bien. Igual te deseo paz y un año bonito."] }
+          ]
+        }
+      },
+
+      {
+        id: "miss",
+        icon: "🧵",
+        title: "Ábrela cuando me extrañes",
+        desc: "Como un hilo que no se rompe.",
+        salutation: "Mi amor…",
+        content: [
+          "Si hoy me extrañas, quiero que sepas que yo también te extraño. No importa si hablamos ayer o hace tiempo: hay personas que se quedan en uno.",
+          "A veces la distancia estira las cosas, las confunde, las cambia… pero no borra lo verdadero.",
+          "Si te sirve pensarlo así: aunque el camino se enrede, yo sigo aquí, con cariño y con calma.",
+          "No vengo a exigirte nada. Solo a recordarte que contigo siempre he querido construir bonito."
+        ],
+        signOff: "— Tu mi señor.",
         interact: {
           question: "¿Qué te ayudaría más ahorita?",
           options: [
-            { label: "🫧 Calmarme", reply: ["Pon una mano en el pecho y otra en el abdomen. Exhala lento. Estás a salvo en este momento."] },
-            { label: "💬 Desahogarme", reply: ["Escribe 3 líneas: qué pasó, qué sientes, qué necesitas. No tienes que ser perfecto/a; solo honesto/a."] },
-            { label: "🚶‍♂️ Moverme", reply: ["Camina 5 minutos (aunque sea dentro de casa). El cuerpo ayuda a que la mente baje el volumen."] }
+            { label: "🫧 Calma", reply: ["Respira: inhala 4, sostén 2, exhala 6. Repite 3 veces."] },
+            { label: "🎶 Música", reply: ["Si te nace, escucha: “El vino de tu boca” (Alejandro Sanz) o “En mi corazón vivirás” (Eros Ramazzotti)."] },
+            { label: "💬 Hablar", reply: ["Si te nace decir algo, aunque sea poquito, aquí estoy. Sin presión."] }
           ]
         }
       },
+
       {
-        id: "happy",
-        icon: "☀️",
-        title: "Abre cuando te sientas feliz",
-        desc: "Para celebrar lo bonito.",
+        id: "talk",
+        icon: "🕊️",
+        title: "Ábrela cuando quieras volver a hablar",
+        desc: "Suave, sin prisa.",
+        salutation: "Mi amor…",
         content: [
-          "¡Me encanta que estés teniendo un buen momento!",
-          "Guarda esto como una foto mental: ¿qué hizo hoy especial este instante?",
-          "Te deseo más días así, y que cuando no sean así, recuerdes que vuelven."
+          "Si abriste esto, es porque algo dentro de ti quería asomarse… y eso lo respeto.",
+          "No vengo a reclamarte, ni a buscar una pelea, ni a presionarte. Vengo a hablar bonito y con calma.",
+          "Si un día quieres retomar, puede ser así: despacito. Un mensaje. Una llamada corta. Una plática sin tema pesado. Lo que sea que te haga sentir tranquila.",
+          "Yo puedo vivir sin ti… pero prefiero estar contigo. Y prefiero que sea con paz."
         ],
+        signOff: "Aquí sigo.",
         interact: {
-          question: "¿Cómo quieres guardar este momento?",
+          question: "¿Qué ritmo te haría sentir más cómoda?",
           options: [
-            { label: "📸 Foto mental", reply: ["Escribe 1 frase corta que describa el momento. Esa será tu “foto”."] },
-            { label: "🎁 Compartirlo", reply: ["Mándale un mensaje a alguien: “Me acordé de ti y hoy me pasó algo bonito.”"] },
-            { label: "🧡 Agradecer", reply: ["Di 3 cosas por las que te sientes agradecido/a hoy. Pequeñas también cuentan."] }
+            { label: "🐢 Lento", reply: ["Perfecto. Lo importante es que sea real y tranquilo."] },
+            { label: "🚶 Normal", reply: ["Va. Paso a paso, sin forzar nada."] },
+            { label: "🤍 No sé", reply: ["No pasa nada. Empezamos con un “hola” cuando te nazca."] }
           ]
         }
       },
+
       {
-        id: "problem",
-        icon: "🧩",
-        title: "Abre cuando tengas un problema",
-        desc: "Para ordenar ideas.",
+        id: "promise",
+        icon: "💍",
+        title: "Ábrela cuando pienses en el anillo",
+        desc: "Una promesa con respeto.",
+        salutation: "Mi amor…",
         content: [
-          "Ok. Primero: respira. Segundo: lo vamos a partir en pedacitos.",
-          "1) ¿Qué está pasando? 2) ¿Qué sí controlas hoy? 3) ¿Cuál es el siguiente paso más simple?",
-          "Si te atoras: haz solo 10 minutos de avance. A veces eso destraba todo."
+          "Te di un anillo de promesa con una idea clara en mi cabeza: volver de Canadá y cambiarlo por uno de matrimonio.",
+          "Y quiero que lo sepas sin presión: esa intención sigue en pie.",
+          "Pero también entiendo algo importante: nada bonito se construye empujando. Si algún día caminamos hacia eso, que sea porque los dos queremos, con paz y con certeza.",
+          "Yo estoy firme… y también estoy tranquilo. Porque lo que quiero contigo es algo que se sienta seguro, no apresurado."
         ],
+        signOff: "— Siempre tuyo, con calma.",
         interact: {
-          question: "Elige un modo para avanzar:",
+          question: "Si este capítulo tuviera una palabra, ¿cuál sería?",
           options: [
-            { label: "🧱 Paso mínimo", reply: ["Define una acción de 2 minutos. Ej: “Escribir el primer renglón”, “abrir el documento”, “hacer la llamada”."] },
-            { label: "🗺️ Plan rápido", reply: ["Haz una lista de 3 opciones. Elige la más simple y prueba hoy. Ajustas después."] },
-            { label: "🧠 Orden mental", reply: ["Anota lo que *no* depende de ti y déjalo fuera. Te quedas solo con lo que sí puedes mover."] }
+            { label: "🕊️ Paz", reply: ["Paz para hablar sin miedo. Paz para elegir bien."] },
+            { label: "⏳ Paciencia", reply: ["Paciencia para que todo madure sin presión."] },
+            { label: "🧭 Claridad", reply: ["Claridad para saber dónde estamos y hacia dónde vamos."] }
           ]
         }
       },
+
+      {
+        id: "songs",
+        icon: "🎶",
+        title: "Ábrela cuando escuches nuestras canciones",
+        desc: "Cuando algo te regrese aquí.",
+        salutation: "Mi amor…",
+        content: [
+          "Hay canciones que no se escuchan con los oídos… se escuchan con recuerdos.",
+          "Si hoy te topaste con una de esas, no la pelees. Solo déjala pasar y siente lo que tengas que sentir.",
+          "Yo sigo guardando esas dedicatorias con cariño. No para amarrarte a nada, sino porque fueron reales."
+        ],
+        signOff: "— Con cariño.",
+        interact: {
+          question: "¿Cuál te trajo a este momento?",
+          options: [
+            { label: "🍷 Alejandro Sanz", reply: ["A veces una canción dice lo que uno no se anima a decir. Respira y suelta tantito."] },
+            { label: "❤️ Eros", reply: ["Los recuerdos bonitos no lastiman… solo piden espacio."] },
+            { label: "📝 Otra", reply: ["Está bien. Quédate con lo que te haga bien y suelta lo demás."] }
+          ]
+        }
+      },
+
+      {
+        id: "far",
+        icon: "🌙",
+        title: "Ábrela cuando te sientas lejos",
+        desc: "Para cuando el mundo pesa.",
+        salutation: "Mi amor…",
+        content: [
+          "Si hoy te sientes lejos —de mí o de todo— quiero recordarte algo: no estás sola en lo que sientes.",
+          "No voy a invadir tu espacio. Solo te dejo este abrazo a distancia, de esos que no piden nada a cambio.",
+          "Si te nace, descansa. Si te nace, habla. Si no te nace nada, también está bien. Lo importante es que estés bien."
+        ],
+        signOff: "— Siempre te deseo paz.",
+        interact: {
+          question: "¿Qué necesitas ahorita?",
+          options: [
+            { label: "🫁 Respirar", reply: ["Inhala 3, exhala 6. Repite 6 veces. Suave."] },
+            { label: "🛌 Descansar", reply: ["Un descanso corto también cuenta. Tu mente lo necesita."] },
+            { label: "💬 Un mensaje", reply: ["Si te nace mandar algo, que sea breve: “hoy no fue fácil”. Yo entiendo."] }
+          ]
+        }
+      },
+
+      // ✅ Extra: cartas “emocionales” generales (por si las quieres mantener)
       {
         id: "anxious",
         icon: "🫧",
-        title: "Abre cuando sientas ansiedad",
+        title: "Ábrela cuando sientas ansiedad",
         desc: "Para volver al presente.",
+        salutation: "Mi amor…",
         content: [
-          "La ansiedad se siente enorme, pero tú puedes volver al presente, poquito a poquito.",
+          "La ansiedad se siente enorme, pero se puede bajar el volumen poquito a poquito.",
           "Prueba 5-4-3-2-1: 5 cosas que ves, 4 que sientes, 3 que escuchas, 2 que hueles, 1 que saboreas.",
-          "No estás fallando. Tu cuerpo está intentando protegerte… solo que se aceleró."
+          "No estás fallando. Tu cuerpo solo se aceleró. Vuelve al presente, suave."
         ],
+        signOff: "— Estoy contigo en espíritu.",
         interact: {
           question: "¿Qué te sirve más para aterrizar?",
           options: [
-            { label: "🧊 Agua fría", reply: ["Lávate la cara con agua fresca o toma agua a sorbos. Señal simple al cuerpo: “bajamos”."] },
-            { label: "🫁 Respiración", reply: ["Exhala más largo que la inhalación: inhala 3, exhala 6. Repite 6 veces."] },
-            { label: "🎧 Sonidos", reply: ["Pon un audio suave o ruido blanco 5 minutos. Tu mente ama los ritmos estables."] }
-          ]
-        }
-      },
-      {
-        id: "tired",
-        icon: "🛌",
-        title: "Abre cuando estés cansado/a",
-        desc: "Para bajar el ritmo sin culpa.",
-        content: [
-          "Descansar también es avanzar.",
-          "Hoy no tienes que ganarte el descanso. Solo tómalo.",
-          "Una cosa a la vez. Si puedes, elige una sola tarea pequeña y después pausa."
-        ],
-        interact: {
-          question: "¿Qué tipo de descanso necesitas?",
-          options: [
-            { label: "😴 Dormir", reply: ["Apaga pantallas 10 min antes. Aunque sea poquito, tu cuerpo te lo va a agradecer."] },
-            { label: "🧠 Mental", reply: ["Haz 5 minutos de ‘no hacer nada’: sin música, sin scroll, solo respirar."] },
-            { label: "🧍 Corporal", reply: ["Estira cuello/hombros 2 minutos. A veces el cansancio vive ahí."] }
+            { label: "🧊 Agua", reply: ["Toma agua a sorbos o lávate la cara con agua fresca. Señal simple al cuerpo: “bajamos”."] },
+            { label: "🫁 Exhalar", reply: ["Exhala más largo que la inhalación: inhala 3, exhala 6."] },
+            { label: "🎧 Sonidos", reply: ["Pon un audio suave 5 minutos. Ritmos estables ayudan."] }
           ]
         }
       },
       {
         id: "doubt",
         icon: "🦋",
-        title: "Abre cuando dudes de ti",
+        title: "Ábrela cuando dudes de ti",
         desc: "Para recordar quién eres.",
+        salutation: "Mi amor…",
         content: [
           "No eres tus días difíciles; eres la persona que sigue intentando.",
-          "Piensa en una cosa que ya superaste. Esa prueba existe por algo.",
+          "Tu valor no se mide por un día malo. Se mide por tu corazón y por lo que has sostenido.",
           "Hoy: un paso pequeño, pero real. Eso también cuenta."
         ],
+        signOff: "— Cree tantito en ti.",
         interact: {
           question: "Elige un recordatorio:",
           options: [
-            { label: "🏆 Logro", reply: ["Escribe un logro (aunque parezca pequeño). Tu cerebro necesita evidencia, no regaños."] },
-            { label: "🧩 Progreso", reply: ["Piensa: “¿Qué mejoré 1% este mes?” Ese 1% se acumula."] },
-            { label: "🤝 Apoyo", reply: ["Si puedes, manda un mensaje breve a alguien de confianza: “¿Me recuerdas algo bueno de mí?”"] }
+            { label: "🏆 Evidencia", reply: ["Anota 1 cosa que ya superaste. Tu mente necesita pruebas, no regaños."] },
+            { label: "🧩 1%", reply: ["¿Qué mejoraste 1% este mes? Ese 1% se acumula."] },
+            { label: "🤍 Suavidad", reply: ["Háblate como le hablarías a alguien que amas."] }
           ]
         }
       }
@@ -867,9 +938,11 @@
     /***********************
      * Estado / Utils
      ***********************/
-    const STORAGE_OPENED = "mailbox_opened_v2";
-    const STORAGE_THEME  = "mailbox_theme_v2";
-    const SESSION_UNLOCK = "mailbox_unlocked_session_v2";
+    const STORAGE_OPENED = "mailbox_opened_v3";
+    const STORAGE_THEME  = "mailbox_theme_v3";
+    const SESSION_UNLOCK = "mailbox_unlocked_session_v3";
+
+    const TYPE_STEP = 2; // ✅ más rápido para cartas largas
 
     const $ = (id)=>document.getElementById(id);
     const grid = $("grid");
@@ -1032,7 +1105,7 @@
       const typeText = (pEl, text, i=0)=>{
         if(i <= text.length){
           pEl.textContent = text.slice(0, i);
-          requestAnimationFrame(()=>typeText(pEl, text, i+1));
+          requestAnimationFrame(()=>typeText(pEl, text, i + TYPE_STEP));
         }else{
           pIndex++;
           if(pIndex < paragraphs.length){
@@ -1049,9 +1122,24 @@
     }
 
     function buildLetterParagraphs(){
-      const toLine = CONFIG.recipientName ? `Para ${CONFIG.recipientName}:` : "Para ti:";
+      const salutation =
+        currentLetter.salutation
+        ?? CONFIG.defaultSalutation
+        ?? (CONFIG.recipientName ? "Mi amor…" : "Hola…");
+
+      const signOff = currentLetter.signOff ?? CONFIG.defaultSignOff ?? "";
       const signature = CONFIG.fromName ? `— ${CONFIG.fromName}` : "—";
-      return [toLine, ...currentLetter.content, signature];
+
+      // Armado final
+      const parts = [
+        salutation,
+        ...(currentLetter.content || []),
+      ];
+
+      if(signOff) parts.push(signOff);
+      parts.push(signature);
+
+      return parts;
     }
 
     function injectInteraction(interact){
@@ -1074,8 +1162,8 @@
         b.textContent = opt.label;
         b.onclick = ()=>{
           replyBox.classList.add("show");
-          replyBox.textContent = (opt.reply || []).join(" ");
-          showToast("✨ Hecho");
+          replyBox.textContent = (opt.reply || []).join("\n");
+          showToast("✨ Listo");
         };
         row.appendChild(b);
       });
@@ -1125,15 +1213,12 @@
 
     $("copyBtn").onclick = async ()=>{
       if(!currentLetter) return;
-      const signature = CONFIG.fromName ? `— ${CONFIG.fromName}` : "";
-      const toLine = CONFIG.recipientName ? `Para ${CONFIG.recipientName}:` : "Para ti:";
+
+      const paragraphs = buildLetterParagraphs();
       const text = [
         currentLetter.title,
         "",
-        toLine,
-        ...(currentLetter.content || []),
-        "",
-        signature
+        ...paragraphs
       ].join("\n");
 
       try{
