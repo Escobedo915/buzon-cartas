@@ -1063,19 +1063,10 @@
         desc: "Para esos días en los que todo pesa un poquito más.",
         content: [
           "Ana, si hoy estás triste, quiero que sepas algo: no tienes que poder con todo al mismo tiempo.",
-          "A veces solo hace falta detenerse, respirar y dejar que el corazón descanse un ratito. No tienes que explicar cada lágrima ni encontrarle sentido a todo justo ahora.",
-          "Me gustaría poder abrazarte en este momento, quedarme contigo en silencio y recordarte que no estás sola.",
-          "Tu tristeza no te hace débil. También eres hermosa en tus días difíciles, también mereces amor cuando no sabes qué decir, cuando estás cansada o cuando solo necesitas calma.",
-          "Aquí estoy, pensándote con mucho cariño. Y aunque este mensaje sea pequeño, va lleno de mí para ti."
-        ],
-        interact: {
-          question: "¿Qué necesitas más en este momento?",
-          options: [
-            { label: "Un abrazo", reply: "Imagínate que te abrazo fuerte, sin prisa, sin preguntas, solo para que descanses un momento en mí." },
-            { label: "Calma", reply: "Respira lento, mi amor. Nada se tiene que resolver en este segundo. Vamos poquito a poquito." },
-            { label: "Sentirme acompañada", reply: "Estoy contigo, Ana. Incluso en tus días nublados, sigues siendo alguien muy especial para mí." }
-          ]
-        }
+          "A veces solo hace falta que te detengas, respires y dejes que tu corazón descanse un ratito. No tienes que explicar cada lágrima ni encontrarle sentido a todo justo ahora.",
+          "Trata de enfocarte solo en aquello que está en tus manos controlar y lo demás, déjalo pasar.",
+          "Tu tristeza no te hace débil. También eres hermosa en tus días difíciles, cuando estás cansada o cuando solo necesitas calma."
+        ]
       },
       {
         id: "happy",
@@ -1083,62 +1074,23 @@
         title: "Abre cuando estés feliz",
         desc: "Para guardar un pedacito bonito de tu día.",
         content: [
-          "Ana, si abriste esta carta porque estás feliz, entonces yo también sonrío contigo.",
-          "Me gusta imaginarte así: contenta, brillando, disfrutando algo bonito que te pasó.",
-          "Ojalá pudieras verte como yo te veo cuando estás feliz. Hay algo en ti que ilumina, que calma, que hace que todo se sienta más bonito.",
-          "Guarda este momento. Acuérdate de cómo se siente. La vida también está hecha de estos instantes pequeños que uno quisiera abrazar para siempre.",
-          "Gracias, porque muchas veces tú también eres una de mis razones para sonreír."
-        ],
-        interact: {
-          question: "¿Cómo quieres recordar este momento?",
-          options: [
-            { label: "Guardarlo", reply: "Quédate con una imagen de este instante. Que sea un recuerdito bonito para volver a él cuando lo necesites." },
-            { label: "Compartirlo", reply: "Me encantaría saber qué te hizo feliz. Tus alegrías también me importan." },
-            { label: "Celebrarlo", reply: "Hoy se vale sonreír sin culpa. Disfruta este momento, Ana. Te lo mereces." }
-          ]
-        }
+          "Ana, si abriste esta carta porque estás feliz, entonces yo también estoy feliz por ti.",
+          "Me gusta imaginarte así: contenta, riendo, disfrutando algo bonito que te pasó, que viste, lo que sea.",
+          "Ojalá pudieras verte como yo te veo cuando estás feliz. Hay algo en tus ojos que ilumina, que calma, que hace que todo se sienta mejor.",
+          "Guarda este momento, este sentimiento. Acuérdate de cómo se siente. La vida también está hecha de estos instantes pequeños que uno quisiera abrazar para siempre."
+        ]
       },
       {
         id: "problem",
         icon: "🧩",
         title: "Abre cuando tengas un problema",
-        desc: "Para respirar, ordenar la mente y no sentirte sola.",
+        desc: "Para respirar y ordenar la mente poquito a poquito.",
         content: [
           "Ana, si algo te preocupa, primero quiero que respires.",
           "No tienes que resolverlo todo de golpe. A veces los problemas se ven enormes porque los miramos todos juntos, pero si los partimos en pedacitos, se vuelven más manejables.",
           "Piensa solo en esto: ¿qué es lo primero, lo más pequeño, que puedes hacer ahora?",
-          "Confío mucho en ti. En tu inteligencia, en tu corazón y en esa fuerza que tienes, incluso cuando tú misma no la notas.",
-          "Y si el día se pone pesado, recuerda esto: no tienes que enfrentarlo sola. Estoy contigo."
-        ],
-        interact: {
-          question: "¿Qué te ayudaría más?",
-          options: [
-            { label: "Ordenar ideas", reply: "Escribe qué pasa, qué depende de ti y cuál sería el siguiente paso más simple. Solo uno, no todos." },
-            { label: "Sentirme capaz", reply: "Yo sí creo en ti, Ana. Has podido con días difíciles antes, y esta vez también vas a poder." },
-            { label: "Pausar", reply: "Descansar también puede ser parte de la solución. A veces la mente responde mejor después de respirar." }
-          ]
-        }
-      },
-      {
-        id: "anxious",
-        icon: "🫧",
-        title: "Abre cuando sientas ansiedad",
-        desc: "Para volver poquito a poquito al presente.",
-        content: [
-          "Ana, si estás sintiendo ansiedad, quiero que leas esto despacito.",
-          "Estás aquí. Este momento va a pasar. Tu cuerpo está asustado, pero no significa que estés en peligro.",
-          "Respira conmigo: inhala lento, suelta el aire más lento todavía. No tienes que pelear con lo que sientes; solo acompáñate con paciencia.",
-          "Me gustaría estar cerca para tomarte de la mano y decirte: tranquila, mi amor, vamos paso a paso.",
-          "No eres tus pensamientos acelerados. No eres este miedo. Eres mucho más que este momento."
-        ],
-        interact: {
-          question: "Elige una forma de bajar el ruido:",
-          options: [
-            { label: "Respirar", reply: "Inhala contando 4, exhala contando 6. Repite varias veces. No hay prisa, Ana." },
-            { label: "Aterrizar", reply: "Mira a tu alrededor y nombra 5 cosas que ves. Regresa al presente, una cosa a la vez." },
-            { label: "Recordatorio", reply: "Esto va a pasar. Tú estás aquí. Estás haciendo lo mejor que puedes, y eso también cuenta." }
-          ]
-        }
+          "Confío mucho en ti. En tu inteligencia, en tu corazón y en esa fuerza que tienes, incluso cuando tú misma no la notas."
+        ]
       },
       {
         id: "tired",
@@ -1147,19 +1099,10 @@
         desc: "Para recordarte que también mereces descansar.",
         content: [
           "Ana, si estás cansada, no quiero que te exijas más de lo necesario.",
-          "A veces uno siente que debe poder con todo, responder todo, resolver todo, sonreír siempre… pero no. También tienes derecho a parar.",
+          "A veces uno siente que debe poder con todo, responder todo, resolver todo, sonreír siempre… pero no. También tienes derecho a parar y hacerte un tiempo para ti.",
           "Descansar no te hace menos fuerte. Descansar también es cuidarte.",
-          "Quisiera que hoy te trataras con ternura. Como tratarías a alguien que amas mucho.",
-          "Y sí, yo te quiero también en tus pausas, en tus silencios, en tus días lentos y en tus ganas de solo descansar."
-        ],
-        interact: {
-          question: "¿Qué descanso necesitas?",
-          options: [
-            { label: "Dormir", reply: "Cierra los ojos un momento. El mundo puede esperar un poco. Tú también importas." },
-            { label: "Pausar", reply: "Haz algo pequeño para ti: agua, café, silencio, música suave. Algo que te abrace el día." },
-            { label: "No culparme", reply: "No tienes que ganarte el descanso. Lo mereces simplemente porque eres humana, Ana." }
-          ]
-        }
+          "Quisiera que hoy te trataras con ternura. Como tratas a quienes amas mucho."
+        ]
       },
       {
         id: "doubt",
@@ -1168,65 +1111,26 @@
         desc: "Para que recuerdes lo mucho que vales.",
         content: [
           "Ana, si hoy estás dudando de ti, quiero prestarte mis ojos un momento.",
-          "Yo veo en ti muchas cosas bonitas: tu forma de sentir, tu manera de estar, tu ternura, tu fuerza y esa luz que tal vez tú no siempre alcanzas a ver.",
-          "No necesitas ser perfecta para ser valiosa. No necesitas demostrar todo el tiempo que puedes. No necesitas compararte con nadie.",
-          "Eres suficiente. Incluso en proceso. Incluso aprendiendo. Incluso cuando no tienes todas las respuestas.",
-          "Yo creo en ti, y no lo digo por decir. Lo digo porque te veo, porque te conozco, porque sé que hay algo muy especial en ti."
-        ],
-        interact: {
-          question: "Elige un recordatorio:",
-          options: [
-            { label: "Valgo mucho", reply: "Sí, Ana. Vales muchísimo. No por lo que haces, sino por quien eres." },
-            { label: "Estoy creciendo", reply: "No tienes que tener todo resuelto. También se vale crecer con calma." },
-            { label: "Soy amada", reply: "Eres amada. Con paciencia, con ternura y con mucho corazón." }
-          ]
-        }
+          "Yo veo en ti muchas cosas bonitas: tu forma de sentir, tu manera de estar, tu ternura, tu fuerza y esa luz que tal vez tú no siempre alcanzas a ver, pero que yo veo en tu mirada.",
+          "Yo creo en ti, y no lo digo por decir. Lo digo porque te conozco, porque creo en tu fortaleza, como todos los que te conocemos."
+        ]
       },
       {
-        id: "miss",
-        icon: "🌙",
-        title: "Abre cuando me extrañes",
-        desc: "Para sentirme un poquito más cerca.",
-        content: [
-          "Ana, si me extrañas, quiero que sepas que a mí también me pasa.",
-          "Hay momentos en los que algo pequeño me recuerda a ti: una canción, una frase, una risa, una idea que quisiera contarte.",
-          "Extrañarte no siempre duele. A veces también se siente bonito, porque me recuerda que hay alguien que ocupa un lugar especial en mi vida.",
-          "Ojalá pudiera aparecer de pronto, abrazarte y quedarme ahí un rato, sin hacer mucho, solo estando contigo.",
-          "Mientras eso pasa, guarda esta carta como una forma chiquita de tenerme cerca."
-        ],
-        interact: {
-          question: "¿Qué haríamos si estuviéramos juntos?",
-          options: [
-            { label: "Abrazarnos", reply: "Sí. De esos abrazos largos donde no hace falta explicar nada." },
-            { label: "Platicar", reply: "Me encantaría escucharte. Tu voz también es una forma bonita de volver a casa." },
-            { label: "Reírnos", reply: "Porque contigo hasta los momentos simples pueden sentirse especiales." }
-          ]
-        }
-      },
-      {
-        id: "special",
+        id: "distance",
         icon: "🌹",
-        title: "Abre cuando quieras recordar algo bonito",
-        desc: "Una carta para volver a lo que se siente bien.",
+        title: "Abre cuando quieras cortar la distancia",
+        desc: "Una carta especial, por si tú también quieres acercarte.",
         content: [
           "Ana, hay cosas que no quiero que se pierdan con los días.",
           "Quiero recordar la forma en que apareciste en mi vida, los detalles que me hicieron mirarte distinto y esa manera tuya de hacer que algo simple se vuelva importante.",
           "No sé si siempre encuentro las palabras exactas, pero sí sé esto: me gusta tenerte en mi vida.",
           "Me gusta pensarte, cuidarte, hacerte detalles y buscar maneras de sacarte una sonrisa.",
-          "Este buzón es una de esas maneras. Un intento sencillo de decirte: aquí hay cariño, aquí hay intención, aquí hay un pedacito de mí para ti."
-        ],
-        interact: {
-          question: "Quédate con una idea:",
-          options: [
-            { label: "Eres importante", reply: "Sí, Ana. Eres importante para mí, más de lo que a veces sé explicar." },
-            { label: "Te pienso", reply: "Te pienso en lo cotidiano, en los detalles, en esas partes del día donde me dan ganas de contarte algo." },
-            { label: "Me importas", reply: "Me importas de verdad. Por eso hice esto, porque quería que lo sintieras de una forma diferente." }
-          ]
-        }
+          "Esta carta es muy especial, porque si la abriste quiere decir que piensas lo mismo que yo. Estoy a un mensaje de distancia de ti; solo necesito eso, si es que tú lo quieres."
+        ]
       }
     ];
 
-    const STORAGE_OPENED = "cartas_ana_opened_v1";
+    const STORAGE_OPENED = "cartas_ana_opened_v2";
     const STORAGE_THEME = "cartas_ana_theme_v1";
     const STORAGE_UNLOCKED = "cartas_ana_unlocked_v1";
 
@@ -1333,40 +1237,6 @@
       $("closeModal").focus();
 
       showToast("Carta abierta");
-    }
-
-    // Se dejó la función por compatibilidad, pero ya no se muestra la sección de opciones en las cartas.
-    function renderInteract(letter) {
-      const box = $("interactBox");
-      if (!box) return;
-
-      if (!letter.interact) {
-        box.innerHTML = "";
-        box.style.display = "none";
-        return;
-      }
-
-      box.style.display = "block";
-      box.innerHTML = `
-        <h4>${escapeHtml(letter.interact.question)}</h4>
-        <div class="option-row"></div>
-        <div class="reply" id="reply"></div>
-      `;
-
-      const row = box.querySelector(".option-row");
-      const reply = box.querySelector("#reply");
-
-      letter.interact.options.forEach(option => {
-        const btn = document.createElement("button");
-        btn.className = "soft-btn";
-        btn.type = "button";
-        btn.textContent = option.label;
-        btn.addEventListener("click", () => {
-          reply.textContent = option.reply;
-          reply.classList.add("show");
-        });
-        row.appendChild(btn);
-      });
     }
 
     function closeModal() {
