@@ -1037,7 +1037,6 @@
         </div>
 
         <div class="content" id="letterContent"></div>
-        <div class="interact" id="interactBox"></div>
       </div>
     </article>
   </div>
@@ -1328,7 +1327,6 @@
         content.appendChild(p);
       });
 
-      renderInteract(letter);
 
       $("overlay").classList.add("show");
       document.body.style.overflow = "hidden";
@@ -1337,8 +1335,10 @@
       showToast("Carta abierta");
     }
 
+    // Se dejó la función por compatibilidad, pero ya no se muestra la sección de opciones en las cartas.
     function renderInteract(letter) {
       const box = $("interactBox");
+      if (!box) return;
 
       if (!letter.interact) {
         box.innerHTML = "";
