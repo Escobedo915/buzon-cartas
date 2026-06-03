@@ -970,6 +970,9 @@
 
       <div class="actions">
         <button class="icon-btn" id="themeBtn" type="button" aria-label="Cambiar tema">🌙</button>
+        <button class="soft-btn" id="lockMailboxBtn" type="button" title="Cerrar buzón y volver al PIN">
+          🔒 <span class="label">Cerrar buzón</span>
+        </button>
         <button class="soft-btn" id="resetBtn" type="button" title="Reiniciar cartas abiertas">
           ↺ <span class="label">Reiniciar</span>
         </button>
@@ -979,18 +982,18 @@
     <section class="hero" aria-label="Presentación">
       <div class="kicker">hecho con cariño • solo para Ana</div>
       <h2 class="hero-title">
-        Un pequeño buzón para <span class="script">Ana</span>
+        Un pequeño buzón para mi <span class="script">Ana</span>
       </h2>
       <p class="hero-subtitle" id="subtitle">
-        Hice este pequeño sitio para ti, para que tengas una carta mía en distintos momentos.
+        Hice este espacio para ti, para que tengas una carta mía en distintos momentos.
         No importa cómo esté tu día: quiero que recuerdes que te quiero, que te pienso
         y que de una forma muy mía estoy cerquita de ti.
       </p>
 
       <div class="quote">
         No es una página perfecta, ni pretende serlo. Es solo una forma de decirte que me importas,
-        que me gusta pensar que esto te podría ayudar en algun moemnto, que respeto lo que me pediste de darte tu espacion,
-        pero que a pesar de eso, quiero encontrar una manera de acompañarte.
+        que me gusta cuidarte en los detalles y que, cuando no sepa exactamente qué decir,
+        igual quiero encontrar una manera de acompañarte.
       </div>
 
       <div class="hero-footer">
@@ -1047,8 +1050,8 @@
       pageTitle: "Cartas para Ana",
       pageSubtitle: "Hice este espacio para ti, para que tengas una carta mía en distintos momentos. No importa cómo esté tu día: quiero que recuerdes que te quiero, que te pienso y que de una forma muy mía estoy cerquita de ti.",
       pinEnabled: true,
-      pinCode: "1802",
-      pinHint: "Pista: Ese día nacio alguien muy especial para mi.",
+      pinCode: "1408",
+      pinHint: "Pista: una fecha especial para mí.",
       theme: "auto"
     };
 
@@ -1395,6 +1398,16 @@
       setTimeout(() => $("pinInput").focus(), 60);
     }
 
+    function lockMailbox() {
+      closeModal();
+      localStorage.removeItem(STORAGE_UNLOCKED);
+      $("pinInput").value = "";
+      $("pinError").textContent = "";
+      $("lock").classList.add("show");
+      setTimeout(() => $("pinInput").focus(), 60);
+      showToast("Buzón cerrado");
+    }
+
     function showToast(message) {
       const toast = $("toast");
       toast.textContent = message;
@@ -1443,6 +1456,7 @@
 
     function bindEvents() {
       $("themeBtn").addEventListener("click", nextTheme);
+      $("lockMailboxBtn").addEventListener("click", lockMailbox);
       $("resetBtn").addEventListener("click", resetOpened);
       $("closeModal").addEventListener("click", closeModal);
 
